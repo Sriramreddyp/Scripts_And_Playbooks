@@ -1,0 +1,64 @@
+---
+
+- hosts: servers
+  become: true
+  pre_tasks:
+
+    #Updating packages
+    - name: Updating packages
+      tags: always
+      apt:
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+
+    #Installing UFW
+    - name: Installing UFW Firewall
+      tags: always
+      package:
+        name: ufw
+        state: latest
+
+    #Configuring ufw
+    - name: configuration UFW for the present user
+      community.general.ufw:
+         state: enabled
+         policy: allow
+         logging: 'on'
+
+    #Setting inbound rules
+    #1--> Denying all the authentication and acess ports initially
+    - name: Denying all the authentication and access ports initially
+      community.general.ufw:
+         rule: reject
+         port: auth
+         log: yes
+
+    #2--> Allowing ssh connections
+
+    - name: Allowing ssh connections
+      community.general.ufw:
+         rule: allow
+         port: 22
+         proto: tcp
+         log: yes
+
+
+    #3--> Allowing http traffic
+    - name: Allowing http Traffic
+      community.general.ufw:
+         rule: allow
+         port: 80
+         proto: tcp
+         log: yes
+
+     #4--> Allowing https traffic
+    - name: Allowing https traffic
+      community.general.ufw:
+         rule: allow
+         port: 80
+         proto: tcp
+         log: yes
+
+
+

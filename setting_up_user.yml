@@ -1,0 +1,47 @@
+---
+
+- hosts: servers
+  become: true
+  pre_tasks:
+
+     #updating and upgrading all packages
+     - name: Updating all the packages initially
+       tags: always
+       apt:
+         update_cache: yes
+        # upgrade: dist
+       when: ansible_distribution == "Ubuntu"
+
+     #Creating a new group
+     - name: Creating a new Group
+       tags: always
+       group:
+          name: "{{user_name}}"
+          state: present
+     
+     #Creating a new user called the Weekend in the group XO
+     - name: Creating a new user 
+       tags: always
+       user:
+        name: "{{user_name}}"
+        shell: /bin/bash
+        groups: root
+        createhome: yes
+        home: /home/"{{user_name}}"
+
+     #Adding ssh Key for login
+     - name: Adding ssh key for the new user
+       tags: always
+       authorized_key:
+         user: "{{user_name}}"
+         key: "{{ssh_key}}"
+     
+     #Adding sudoer file for the user
+     - name: Adding sudoer file for the present user
+       tags: always
+       copy: 
+        src: sudoer_"{{user_name}}"
+        dest: /etc/sudoers.d/
+        owner: root
+        group: root
+        mode: 0440

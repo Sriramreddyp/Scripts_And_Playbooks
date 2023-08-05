@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+#Take hosts as space sperated string
+#Take group name
+#Take filename
+#Take username and password (same for everyUser)
+# $1 - hosts
+# $2 - filename
+# $3 - group name
+# $4 - username
+# $5 - password
+
+IFS=' '
+
+read -ra values <<< "$1"
+
+mkdir /$HOME/$2
+mkdir /$HOME/$2/files
+
+
+mkdir /$HOME/$2/host_vars
+
+echo [$3] > /$HOME/$2/inventory
+
+for value in "${values[@]}"; do
+  echo $value >> /$HOME/$2/inventory 
+done
+
+echo [$3:vars] >> /$HOME/$2/inventory
+
+echo "ansible_ssh_user=$4" >> /$HOME/$2/inventory
+echo "ansible_ssh_pass=$5" >> /$HOME/$2/inventory
+echo "ansible_become_pass=$5" >> /$HOME/$2/inventory
+
+echo "[defaults]" > /$HOME/$2/ansible.cfg
+echo "inventory = inventory" >> /$HOME/$2/ansible.cfg

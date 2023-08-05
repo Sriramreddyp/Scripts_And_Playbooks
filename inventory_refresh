@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+#1 hosts
+#2 filename
+#3 groupname
+#4 keyname
+#5 username
+
+IFS=' '
+
+read -ra values <<< "$1"
+
+
+rm -r ~/$2/inventory
+
+echo "[$3]" > /$HOME/$2/inventory 
+
+for value in "${values[@]}"; do
+  echo $value >> /$HOME/$2/inventory 
+done
+
+
+echo "private_key_file = ~/.ssh/$4 " >> /$HOME/$2/ansible.cfg
+echo "remote_user = $5" >> /$HOME/$2/ansible.cfg

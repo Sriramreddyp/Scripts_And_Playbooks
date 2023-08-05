@@ -1,0 +1,23 @@
+#! /usr/bin/env bash
+
+#Hosts name
+#filename
+#username
+#keyname
+
+IFS=' '
+
+read -ra values <<< "$1"
+
+echo "$3 ALL=(ALL) NOPASSWD: ALL" > /$HOME/$2/files/sudoer_$3
+
+for value in "${values[@]}"; do
+  echo "user_name: $3" > /$HOME/$2/host_vars/$value.yml 
+done
+
+for value in "${values[@]}"; do
+ var=$(< ~/.ssh/$4)
+ echo "ssh_key: $var" >> /$HOME/$2/host_vars/$value.yml
+done
+
+

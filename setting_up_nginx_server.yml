@@ -1,0 +1,52 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks: 
+
+    - name: install updates (Ubuntu)
+      tags: always
+      apt:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution == "Ubuntu"
+
+  tasks: 
+
+     # Installing nginx
+     - name: Installing nginx latest version
+       tags: nginx
+       package:
+         name: nginx
+         state: latest
+       when: ansible_distribution == "Ubuntu"
+
+     #Copying nginx cfg to worker node
+     - name: Updating cfg file in worker node
+       tags: cfg,nginx
+       copy:
+         src: /home/kratos/Ansible/static_site/static_site.cfg
+         dest: /etc/nginx/sites-available/static_site.cfg
+
+     #Creating a symlink between sites-enabled and sites-available in worker node
+     - name: Creating a Symlink between sites-available and sites-enabled
+       tags: symlink
+       file:
+         src: /etc/nginx/sites-available/static_site.cfg
+         dest: /etc/nginx/sites-enabled/default
+         state: link
+
+     #Copying the contents of the webpage
+     - name: Copying contents of the webpage
+       tags: content transfer
+       copy:
+         src: /home/kratos/Ansible/static_site/myPage.html
+         dest: /home/weekend/ 
+
+     #Restarting nginx
+     - name: restarting Nginx
+       tags: service restart
+       service:
+          name: nginx
+          state: restarted
+       
