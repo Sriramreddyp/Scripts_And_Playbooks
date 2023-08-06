@@ -27,7 +27,7 @@
         shell: /bin/bash
         groups: root
         createhome: yes
-        home: /home/"{{user_name}}"
+        home: "/home/{{user_name}}"
 
      #Adding ssh Key for login
      - name: Adding ssh key for the new user
@@ -40,7 +40,7 @@
      - name: Adding sudoer file for the present user
        tags: always
        copy: 
-        src: sudoer_"{{user_name}}"
+        src: "sudoer_{{user_name}}"
         dest: /etc/sudoers.d/
         owner: root
         group: root
