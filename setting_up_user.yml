@@ -41,7 +41,7 @@
        tags: always
        copy: 
         src: "sudoer_{{user_name}}"
-        dest: /etc/sudoers.d/
+        dest: "/etc/sudoers.d/{{user_name}}"
         owner: root
         group: root
         mode: 0440
